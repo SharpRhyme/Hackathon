@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A premium Google Cloud Platform integration dashboard built with Python, Flask, and dynamic glassmorphic design. Manage your storage buckets and connection status.">
+    <title>Google Cloud Platform Project Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Local Styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-gradients">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-brands fa-google-play"></i>
+                </div>
+                <div>
+                    <h1 id="main-title">GCP Control Center</h1>
+                    <p class="subtitle">Cloud Integration Dashboard</p>
+                </div>
+            </div>
+            <div class="auth-pill-wrapper">
+                <div id="connection-badge" class="badge loading">
+                    <span class="pulse-dot"></span>
+                    <span id="badge-text">Checking GCP Connection...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- Project & Connection Panel -->
+        <section class="card glass" id="project-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fa-solid fa-server"></i></div>
+                <h2>Project Information</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-group">
+                    <label>Active GCP Project ID</label>
+                    <div class="value-with-copy">
+                        <span id="gcp-project-id" class="project-id-value">my-first-project</span>
+                        <button id="copy-project-id-btn" class="icon-btn" title="Copy Project ID"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <label>Platform Status</label>
+                    <p id="auth-status-detail">Verifying default credentials...</p>
+                </div>
+                <div id="unauthenticated-alert" class="alert-box warning hidden">
+                    <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="alert-content">
+                        <h3>Credentials Missing</h3>
+                        <p>No Google Cloud Application Default Credentials (ADC) were detected. Check the Setup Guide card to connect.</p>
+                    </div>
+                </div>
+                <div id="authenticated-alert" class="alert-box success hidden">
+                    <div class="alert-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="alert-content">
+                        <h3>Connected successfully!</h3>
+                        <p>GCP APIs are authenticated using default service account/user credentials.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Setup Instructions Panel (Dynamic based on connection status) -->
+        <section class="card glass" id="setup-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fa-solid fa-terminal"></i></div>
+                <h2>GCP Connection Guide</h2>
+            </div>
+            <div class="card-body scrollable-content">
+                <p class="description-text">Run the following commands in your terminal to initialize and connect this application with your Google Cloud account:</p>
+                
+                <div class="setup-steps">
+                    <div class="step">
+                        <span class="step-num">1</span>
+                        <div class="step-text">
+                            <strong>Configure Project ID</strong>
+                            <pre><code>./google-cloud-sdk/bin/gcloud config set project my-first-project</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-num">2</span>
+                        <div class="step-text">
+                            <strong>Authenticate User Account</strong>
+                            <pre><code>./google-cloud-sdk/bin/gcloud auth login</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-num">3</span>
+                        <div class="step-text">
+                            <strong>Generate Application Credentials</strong>
+                            <p class="small-text">This allows local Python programs to authenticate automatically.</p>
+                            <pre><code>./google-cloud-sdk/bin/gcloud auth application-default login</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Storage Buckets Panel -->
+        <section class="card glass full-width" id="storage-card">
+            <div class="card-header flex-between">
+                <div class="header-left">
+                    <div class="card-icon"><i class="fa-solid fa-box-open"></i></div>
+                    <h2>Cloud Storage Buckets</h2>
+                </div>
+                <div class="header-actions">
+                    <button id="refresh-buckets-btn" class="primary-btn square" title="Refresh List"><i class="fa-solid fa-rotate"></i></button>
+                    <button id="open-create-bucket-btn" class="primary-btn"><i class="fa-solid fa-plus"></i> Create Bucket</button>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <!-- Search bar -->
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="bucket-search" placeholder="Search buckets...">
+                </div>
+
+                <!-- Buckets List Grid -->
+                <div id="buckets-loader" class="loader-wrapper hidden">
+                    <div class="spinner"></div>
+                    <p>Fetching storage buckets from GCP...</p>
+                </div>
+
+                <div id="buckets-empty" class="empty-state hidden">
+                    <i class="fa-solid fa-folder-open empty-icon"></i>
+                    <h3>No Storage Buckets Found</h3>
+                    <p>No buckets are available in this project or credentials are missing.</p>
+                </div>
+
+                <div id="buckets-error" class="error-state alert-box error hidden">
+                    <div class="alert-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                    <div class="alert-content">
+                        <h3>Listing Buckets Failed</h3>
+                        <p id="buckets-error-msg">Could not list storage buckets. Make sure Storage API is enabled and you have auth credentials.</p>
+                    </div>
+                </div>
+
+                <div id="buckets-list-container" class="buckets-grid">
+                    <!-- Dynamic buckets will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- File Upload Modal/Card -->
+        <section class="card glass hidden" id="upload-panel">
+            <div class="card-header flex-between">
+                <div class="header-left">
+                    <div class="card-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <h2>Upload File to GCS</h2>
+                </div>
+                <button id="close-upload-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body">
+                <p class="description-text">Uploading to: <strong id="upload-target-bucket">bucket-name</strong></p>
+                <form id="upload-form" class="dropzone-form">
+                    <div class="file-drop-area" id="drop-area">
+                        <i class="fa-solid fa-file-import drop-icon"></i>
+                        <p>Drag & drop or <span class="highlight">browse</span> your file</p>
+                        <input type="file" id="file-input" name="file" required>
+                    </div>
+                    <div id="selected-file-info" class="hidden">
+                        <span class="file-name"><i class="fa-regular fa-file"></i> <span id="file-name-text">filename.txt</span></span>
+                        <button type="button" id="remove-file-btn" class="icon-btn danger"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                    <button type="submit" id="submit-upload-btn" class="action-btn wide disabled" disabled>Upload to Cloud</button>
+                </form>
+                <div id="upload-progress-wrapper" class="progress-bar-wrapper hidden">
+                    <div class="progress-track">
+                        <div id="upload-progress-bar" class="progress-fill"></div>
+                    </div>
+                    <p id="upload-progress-status">Uploading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Create Bucket Panel/Modal -->
+        <section class="card glass hidden" id="create-bucket-panel">
+            <div class="card-header flex-between">
+                <div class="header-left">
+                    <div class="card-icon"><i class="fa-solid fa-folder-plus"></i></div>
+                    <h2>Create New Bucket</h2>
+                </div>
+                <button id="close-create-bucket-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="card-body">
+                <form id="create-bucket-form">
+                    <div class="input-group">
+                        <label for="new-bucket-name">Bucket Name</label>
+                        <p class="small-text">Must be globally unique. Only lowercase letters, numbers, dashes, and underscores.</p>
+                        <input type="text" id="new-bucket-name" placeholder="e.g. my-gcp-app-storage-bucket" required pattern="[a-z0-9_.-]+">
+                    </div>
+                    <button type="submit" id="submit-create-bucket-btn" class="action-btn wide">Create Bucket</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Success/Failure Toast notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 GCP Control Center. Designed with luxury modern aesthetics. Compatible with Google Cloud Run & Heroku.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
