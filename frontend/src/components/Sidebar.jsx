@@ -26,6 +26,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Link2,
+  UserCircle,
 } from 'lucide-react'
 import { useAccessibility } from '../context/AccessibilityContext'
 
@@ -50,6 +51,7 @@ const ICONS = {
   equations: Calculator,
   crawler: Link2,
   accessibility: Accessibility,
+  account: UserCircle,
 }
 
 const NAV_SECTIONS = [
@@ -109,7 +111,10 @@ const NAV_SECTIONS = [
   {
     id: 'settings',
     label: 'Settings',
-    items: [{ id: 'accessibility', label: 'Accessibility', icon: 'accessibility' }],
+    items: [
+      { id: 'account', label: 'Account', icon: 'account' },
+      { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
+    ],
   },
 ]
 

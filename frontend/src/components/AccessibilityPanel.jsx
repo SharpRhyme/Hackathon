@@ -7,6 +7,16 @@ import {
   Focus,
   Eye,
   Check,
+  MousePointer2,
+  Move,
+  AlignLeft,
+  AlignCenter,
+  Baseline,
+  Rows3,
+  RectangleHorizontal,
+  Captions,
+  RotateCcw,
+  ScanLine,
 } from 'lucide-react'
 import { useAccessibility } from '../context/AccessibilityContext'
 
@@ -51,7 +61,16 @@ function ToggleRow({ icon: Icon, label, description, checked, onChange }) {
 }
 
 export default function AccessibilityPanel() {
-  const { settings, toggle, setColorblindMode, speak, stopSpeaking } = useAccessibility()
+  const {
+    settings,
+    toggle,
+    setColorblindMode,
+    setReadingWidth,
+    setTextAlign,
+    resetAccessibility,
+    speak,
+    stopSpeaking,
+  } = useAccessibility()
 
   const handleTtsDemo = () => {
     if (window.speechSynthesis?.speaking) {
@@ -89,6 +108,27 @@ export default function AccessibilityPanel() {
           description="Maximum contrast black/white palette for low vision users."
           checked={settings.highContrast}
           onChange={() => toggle('highContrast')}
+        />
+        <ToggleRow
+          icon={Baseline}
+          label="Large Text"
+          description="Increase interface and reading text without relying on browser zoom."
+          checked={settings.largeText}
+          onChange={() => toggle('largeText')}
+        />
+        <ToggleRow
+          icon={Rows3}
+          label="Extra Line Spacing"
+          description="Adds more breathing room between lines, buttons, and form controls."
+          checked={settings.extraSpacing}
+          onChange={() => toggle('extraSpacing')}
+        />
+        <ToggleRow
+          icon={ScanLine}
+          label="Reading Guide"
+          description="Adds a subtle horizontal guide behind text-heavy reading areas."
+          checked={settings.readingGuide}
+          onChange={() => toggle('readingGuide')}
         />
       </section>
 
@@ -129,6 +169,95 @@ export default function AccessibilityPanel() {
           description="Wider line spacing, reduced sidebar noise, one-task-at-a-time layout."
           checked={settings.adhdFocus}
           onChange={() => toggle('adhdFocus')}
+        />
+        <ToggleRow
+          icon={Move}
+          label="Reduced Motion"
+          description="Disables animations and transitions for motion sensitivity."
+          checked={settings.reducedMotion}
+          onChange={() => toggle('reducedMotion')}
+        />
+        <ToggleRow
+          icon={RectangleHorizontal}
+          label="Reduced Transparency"
+          description="Uses solid panels instead of translucent surfaces."
+          checked={settings.reducedTransparency}
+          onChange={() => toggle('reducedTransparency')}
+        />
+        <ToggleRow
+          icon={MousePointer2}
+          label="Large Focus Ring"
+          description="Makes keyboard focus very obvious across controls."
+          checked={settings.wideFocusRing}
+          onChange={() => toggle('wideFocusRing')}
+        />
+      </section>
+
+      <section aria-labelledby="reading-layout-heading" className="space-y-3">
+        <h2 id="reading-layout-heading" className="text-xs font-semibold uppercase tracking-widest text-zinc-600">
+          Reading Layout
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+            <p className="text-xs font-medium uppercase tracking-widest text-zinc-600">Width</p>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {['narrow', 'normal', 'wide'].map((width) => (
+                <button
+                  key={width}
+                  type="button"
+                  onClick={() => setReadingWidth(width)}
+                  className={`rounded-md border px-2 py-2 text-xs capitalize ${
+                    settings.readingWidth === width
+                      ? 'border-violet-500 bg-violet-950/40 text-violet-300'
+                      : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700'
+                  }`}
+                >
+                  {width}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+            <p className="text-xs font-medium uppercase tracking-widest text-zinc-600">Alignment</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setTextAlign('left')}
+                className={`flex items-center justify-center gap-2 rounded-md border px-2 py-2 text-xs ${
+                  settings.textAlign === 'left'
+                    ? 'border-violet-500 bg-violet-950/40 text-violet-300'
+                    : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700'
+                }`}
+              >
+                <AlignLeft className="h-3.5 w-3.5" /> Left
+              </button>
+              <button
+                type="button"
+                onClick={() => setTextAlign('center')}
+                className={`flex items-center justify-center gap-2 rounded-md border px-2 py-2 text-xs ${
+                  settings.textAlign === 'center'
+                    ? 'border-violet-500 bg-violet-950/40 text-violet-300'
+                    : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700'
+                }`}
+              >
+                <AlignCenter className="h-3.5 w-3.5" /> Center
+              </button>
+            </div>
+          </div>
+        </div>
+        <ToggleRow
+          icon={Captions}
+          label="Caption-Friendly Mode"
+          description="Keeps generated AI text in tighter chunks for captions and screen magnifiers."
+          checked={settings.captionsMode}
+          onChange={() => toggle('captionsMode')}
+        />
+        <ToggleRow
+          icon={Type}
+          label="Underline Links"
+          description="Makes links identifiable without relying on color alone."
+          checked={settings.underlineLinks}
+          onChange={() => toggle('underlineLinks')}
         />
       </section>
 
@@ -186,6 +315,14 @@ export default function AccessibilityPanel() {
           </li>
         </ul>
       </section>
+
+      <button
+        type="button"
+        onClick={resetAccessibility}
+        className="inline-flex items-center gap-2 rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+      >
+        <RotateCcw className="h-4 w-4" /> Reset accessibility settings
+      </button>
     </div>
   )
 }

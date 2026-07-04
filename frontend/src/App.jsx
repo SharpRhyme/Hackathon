@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { AccessibilityProvider, useAccessibility } from './context/AccessibilityContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import Sidebar from './components/Sidebar'
 import AccessibilityPanel from './components/AccessibilityPanel'
 import GeminiURLCrawler from './components/GeminiURLCrawler'
 import BlurtMethod from './components/BlurtMethod'
 import FeatureView from './components/FeatureView'
+import AccountPanel from './components/AccountPanel'
 
 const VIEW_LABELS = {
   dashboard: 'Dashboard — your learning overview',
@@ -27,11 +29,13 @@ const VIEW_LABELS = {
   labs: 'Virtual science labs',
   equations: 'Equation solver',
   accessibility: 'Accessibility settings panel',
+  account: 'Account and login',
 }
 
 function AppShell() {
   const [activeView, setActiveView] = useState('dashboard')
   const { settings, speak, stopSpeaking } = useAccessibility()
+  const { user, loading: authLoading } = useAuth()
   const mainRef = useRef(null)
 
   const handleNavigate = useCallback((viewId) => {
@@ -76,12 +80,24 @@ function AppShell() {
     settings.highContrast ? 'high-contrast' : '',
     settings.colorblindMode !== 'none' ? `colorblind-${settings.colorblindMode}` : '',
     settings.adhdFocus ? 'adhd-focus' : '',
+    settings.reducedMotion ? 'reduced-motion' : '',
+    settings.largeText ? 'large-text' : '',
+    settings.extraSpacing ? 'extra-spacing' : '',
+    settings.readingGuide ? 'reading-guide' : '',
+    settings.underlineLinks ? 'underline-links' : '',
+    settings.reducedTransparency ? 'reduced-transparency' : '',
+    settings.captionsMode ? 'captions-mode' : '',
+    settings.wideFocusRing ? 'wide-focus-ring' : '',
+    settings.readingWidth !== 'normal' ? `reading-width-${settings.readingWidth}` : '',
+    settings.textAlign !== 'left' ? `text-align-${settings.textAlign}` : '',
   ]
     .filter(Boolean)
     .join(' ')
 
   const renderView = () => {
     switch (activeView) {
+      case 'account':
+        return <AccountPanel />
       case 'accessibility':
         return <AccessibilityPanel />
       case 'crawler':
@@ -118,6 +134,13 @@ function AppShell() {
             {VIEW_LABELS[activeView] || activeView}
           </p>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveView('account')}
+              className="max-w-40 truncate rounded border border-zinc-700 px-2 py-1 text-[10px] text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
+            >
+              {authLoading ? 'Checking account' : user ? user.display_name : 'Log in'}
+            </button>
             {settings.dyslexiaFont && (
               <span className="rounded border border-zinc-700 px-1.5 py-0.5 text-[10px] text-zinc-500">
                 Dyslexic
@@ -151,8 +174,10 @@ function AppShell() {
 
 export default function App() {
   return (
-    <AccessibilityProvider>
-      <AppShell />
-    </AccessibilityProvider>
+    <AuthProvider>
+      <AccessibilityProvider>
+        <AppShell />
+      </AccessibilityProvider>
+    </AuthProvider>
   )
 }
