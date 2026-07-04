@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import dotenv
 import hashlib
 import hmac
 import json
@@ -19,6 +20,7 @@ from google import genai
 from pydantic import BaseModel, Field
 
 
+dotenv.load_dotenv(".env")
 APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = APP_DIR / "local_data"
 USERS_FILE = DATA_DIR / "users.json"
