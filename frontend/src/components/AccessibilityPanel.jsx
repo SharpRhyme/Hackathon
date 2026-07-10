@@ -1,24 +1,39 @@
 import {
-  Type,
-  Contrast,
-  Palette,
-  Volume2,
-  VolumeX,
-  Focus,
-  Eye,
+  Accessibility,
+  AlignCenter,
+  AlignLeft,
+  Baseline,
+  Captions,
   Check,
+  Contrast,
+  Eye,
+  Focus,
   MousePointer2,
   Move,
-  AlignLeft,
-  AlignCenter,
-  Baseline,
-  Rows3,
+  Palette,
   RectangleHorizontal,
-  Captions,
   RotateCcw,
+  Rows3,
   ScanLine,
+  Type,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import { useAccessibility } from '../context/AccessibilityContext'
+import { View, Card, Button, Kbd } from './ui'
+
+const THEME_PRESETS = [
+  { id: 'porcelain', label: 'Porcelain', paper: '#F5F5F7', accent: '#0066CC', ink: '#1B1B1F' },
+  { id: 'sunrise', label: 'Sunrise', paper: '#FDF6EE', accent: '#E05D38', ink: '#2E201A' },
+  { id: 'paper', label: 'Paper', paper: '#F6F3EC', accent: '#C14E2B', ink: '#201D17' },
+  { id: 'meadow', label: 'Meadow', paper: '#F3F7F1', accent: '#2C7A4A', ink: '#1A211B' },
+  { id: 'ocean', label: 'Ocean', paper: '#F0F6F9', accent: '#0D7499', ink: '#161F26' },
+  { id: 'lavender', label: 'Lavender', paper: '#F7F5FA', accent: '#704AB6', ink: '#201C28' },
+  { id: 'dusk', label: 'Dusk', paper: '#18181D', accent: '#F0A64C', ink: '#EEEEF3' },
+]
+
+const SANS_FONTS = ['System', 'Inter', 'Atkinson Hyperlegible', 'Karla', 'Nunito', 'IBM Plex Sans', 'Lora']
+const DISPLAY_FONTS = ['System', 'Inter', 'Fraunces', 'Space Grotesk', 'Lora', 'Karla', 'IBM Plex Sans']
 
 const COLORBLIND_OPTIONS = [
   { id: 'none', label: 'Default' },
@@ -29,34 +44,39 @@ const COLORBLIND_OPTIONS = [
 
 function ToggleRow({ icon: Icon, label, description, checked, onChange }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 transition-colors hover:border-zinc-700">
-      <div className="mt-0.5 rounded-md bg-zinc-800 p-2">
-        <Icon className="h-4 w-4 text-violet-400" aria-hidden="true" />
+    <div className="flex items-start gap-3 rounded-xl border border-line bg-raised p-3.5 transition-colors hover:border-faint/50">
+      <div className="mt-0.5 rounded-lg bg-clay-wash p-2">
+        <Icon className="h-4 w-4 text-clay" aria-hidden="true" />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-zinc-200">{label}</span>
+          <span className="text-sm font-medium text-ink">{label}</span>
           <button
             type="button"
             role="switch"
             aria-checked={checked}
+            aria-label={label}
             onClick={() => onChange(!checked)}
-            className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
-              checked ? 'bg-violet-600' : 'bg-zinc-700'
+            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+              checked ? 'bg-clay' : 'bg-line'
             }`}
           >
             <span
-              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                checked ? 'left-4' : 'left-0.5'
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                checked ? 'left-[1.375rem]' : 'left-0.5'
               }`}
             />
           </button>
         </div>
-        {description && (
-          <p className="mt-1 text-xs leading-relaxed text-zinc-500">{description}</p>
-        )}
+        {description && <p className="mt-1 text-xs leading-relaxed text-faint">{description}</p>}
       </div>
-    </label>
+    </div>
+  )
+}
+
+function SectionTitle({ children }) {
+  return (
+    <h2 className="pt-2 text-xs font-bold uppercase tracking-[0.16em] text-faint">{children}</h2>
   )
 }
 
@@ -70,259 +90,320 @@ export default function AccessibilityPanel() {
     resetAccessibility,
     speak,
     stopSpeaking,
+    speaking,
+    voices,
+    setSettings,
   } = useAccessibility()
 
   const handleTtsDemo = () => {
-    if (window.speechSynthesis?.speaking) {
+    if (speaking) {
       stopSpeaking()
       return
     }
     speak(
-      'Welcome to LearnDifferent. Text-to-speech is active. Use Control plus Space anywhere to hear page context.',
+      'Welcome to LearnDifferent. Text to speech is working. Press Control plus Space anywhere to hear the current page.',
     )
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-6">
-      <header>
-        <h1 className="text-xl font-semibold text-zinc-100">Accessibility Settings</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Customize the interface for dyslexia, color vision, ADHD focus, and screen reading.
-        </p>
-      </header>
+    <View
+      icon={Accessibility}
+      eyebrow="Your setup"
+      title="Accessibility"
+      description="Shape the whole app around how you read, focus, and listen. Everything here applies instantly and is remembered."
+    >
+      <div className="space-y-3">
+        <SectionTitle>Appearance</SectionTitle>
+        <Card>
+          <p className="text-sm font-medium text-ink">Theme</p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label="Colour theme">
+            {THEME_PRESETS.map((theme) => {
+              const active = (settings.theme || 'porcelain') === theme.id
+              return (
+                <button
+                  key={theme.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setSettings((s) => ({ ...s, theme: theme.id }))}
+                  className={`rounded-xl border-2 p-2.5 text-left transition-all ${
+                    active ? 'border-clay shadow-card' : 'border-line hover:border-faint'
+                  }`}
+                  style={{ backgroundColor: theme.paper }}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-4 w-4 rounded-full" style={{ backgroundColor: theme.accent }} aria-hidden="true" />
+                    <span className="h-4 w-4 rounded-full border" style={{ backgroundColor: theme.ink, borderColor: theme.accent }} aria-hidden="true" />
+                  </span>
+                  <span className="mt-2 block text-xs font-semibold" style={{ color: theme.ink }}>
+                    {theme.label}
+                    {active ? ' ✓' : ''}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-faint">App font</span>
+              <select
+                value={settings.fontSans || 'System'}
+                onChange={(e) => setSettings((s) => ({ ...s, fontSans: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm text-ink focus:border-clay focus:outline-none"
+              >
+                {SANS_FONTS.map((font) => (
+                  <option key={font} value={font} style={{ fontFamily: font }}>
+                    {font}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-faint">Heading font</span>
+              <select
+                value={settings.fontDisplay || 'System'}
+                onChange={(e) => setSettings((s) => ({ ...s, fontDisplay: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm text-ink focus:border-clay focus:outline-none"
+              >
+                {DISPLAY_FONTS.map((font) => (
+                  <option key={font} value={font} style={{ fontFamily: font }}>
+                    {font}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </Card>
 
-      <section aria-labelledby="typography-heading" className="space-y-3">
-        <h2 id="typography-heading" className="text-xs font-semibold uppercase tracking-widest text-zinc-600">
-          Typography & Vision
-        </h2>
+        <SectionTitle>Typography and vision</SectionTitle>
         <ToggleRow
           icon={Type}
-          label="OpenDyslexic Font"
-          description="Switch to OpenDyslexic — a typeface designed for dyslexic readers."
+          label="OpenDyslexic font"
+          description="Switch to OpenDyslexic, a typeface designed for dyslexic readers."
           checked={settings.dyslexiaFont}
           onChange={() => toggle('dyslexiaFont')}
         />
         <ToggleRow
           icon={Contrast}
-          label="High Contrast Mode"
-          description="Maximum contrast black/white palette for low vision users."
+          label="High contrast mode"
+          description="Maximum contrast palette for low vision. The whole app switches, not just text."
           checked={settings.highContrast}
           onChange={() => toggle('highContrast')}
         />
         <ToggleRow
           icon={Baseline}
-          label="Large Text"
+          label="Large text"
           description="Increase interface and reading text without relying on browser zoom."
           checked={settings.largeText}
           onChange={() => toggle('largeText')}
         />
         <ToggleRow
           icon={Rows3}
-          label="Extra Line Spacing"
-          description="Adds more breathing room between lines, buttons, and form controls."
+          label="Extra line spacing"
+          description="More breathing room between lines, buttons, and form controls."
           checked={settings.extraSpacing}
           onChange={() => toggle('extraSpacing')}
         />
         <ToggleRow
           icon={ScanLine}
-          label="Reading Guide"
-          description="Adds a subtle horizontal guide behind text-heavy reading areas."
+          label="Reading guide"
+          description="A subtle ruled guide behind text-heavy reading areas."
           checked={settings.readingGuide}
           onChange={() => toggle('readingGuide')}
         />
-      </section>
 
-      <section aria-labelledby="colorblind-heading" className="space-y-3">
-        <h2 id="colorblind-heading" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-600">
-          <Palette className="h-3.5 w-3.5" aria-hidden="true" />
-          Colorblind Palettes
-        </h2>
+        <SectionTitle>
+          <span className="inline-flex items-center gap-1.5">
+            <Palette className="h-3.5 w-3.5" aria-hidden="true" /> Colour vision
+          </span>
+        </SectionTitle>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {COLORBLIND_OPTIONS.map((opt) => (
             <button
               key={opt.id}
               type="button"
               onClick={() => setColorblindMode(opt.id)}
-              className={`relative rounded-lg border px-3 py-2.5 text-xs font-medium transition-colors ${
+              className={`relative rounded-xl border px-3 py-2.5 text-xs font-medium transition-colors ${
                 settings.colorblindMode === opt.id
-                  ? 'border-violet-500 bg-violet-950/40 text-violet-300'
-                  : 'border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700'
+                  ? 'border-clay bg-clay-wash text-clay-deep'
+                  : 'border-line bg-raised text-soft hover:border-faint'
               }`}
             >
               {settings.colorblindMode === opt.id && (
-                <Check className="absolute right-1.5 top-1.5 h-3 w-3 text-violet-400" />
+                <Check className="absolute right-1.5 top-1.5 h-3 w-3 text-clay" aria-hidden="true" />
               )}
               {opt.label}
             </button>
           ))}
         </div>
-      </section>
 
-      <section aria-labelledby="adhd-heading" className="space-y-3">
-        <h2 id="adhd-heading" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-600">
-          <Focus className="h-3.5 w-3.5" aria-hidden="true" />
-          ADHD / Planning Layout
-        </h2>
+        <SectionTitle>
+          <span className="inline-flex items-center gap-1.5">
+            <Focus className="h-3.5 w-3.5" aria-hidden="true" /> Focus and motion
+          </span>
+        </SectionTitle>
         <ToggleRow
           icon={Eye}
-          label="Focus Mode"
-          description="Wider line spacing, reduced sidebar noise, one-task-at-a-time layout."
+          label="Focus mode"
+          description="Wider line spacing and a quieter sidebar, one task at a time."
           checked={settings.adhdFocus}
           onChange={() => toggle('adhdFocus')}
         />
         <ToggleRow
           icon={Move}
-          label="Reduced Motion"
+          label="Reduced motion"
           description="Disables animations and transitions for motion sensitivity."
           checked={settings.reducedMotion}
           onChange={() => toggle('reducedMotion')}
         />
         <ToggleRow
           icon={RectangleHorizontal}
-          label="Reduced Transparency"
-          description="Uses solid panels instead of translucent surfaces."
+          label="Reduced transparency"
+          description="Solid panels instead of translucent surfaces."
           checked={settings.reducedTransparency}
           onChange={() => toggle('reducedTransparency')}
         />
         <ToggleRow
           icon={MousePointer2}
-          label="Large Focus Ring"
-          description="Makes keyboard focus very obvious across controls."
+          label="Large focus ring"
+          description="Makes keyboard focus very obvious on every control."
           checked={settings.wideFocusRing}
           onChange={() => toggle('wideFocusRing')}
         />
-      </section>
 
-      <section aria-labelledby="reading-layout-heading" className="space-y-3">
-        <h2 id="reading-layout-heading" className="text-xs font-semibold uppercase tracking-widest text-zinc-600">
-          Reading Layout
-        </h2>
+        <SectionTitle>Reading layout</SectionTitle>
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
-            <p className="text-xs font-medium uppercase tracking-widest text-zinc-600">Width</p>
+          <Card className="p-3.5">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-faint">Width</p>
             <div className="mt-3 grid grid-cols-3 gap-2">
               {['narrow', 'normal', 'wide'].map((width) => (
                 <button
                   key={width}
                   type="button"
                   onClick={() => setReadingWidth(width)}
-                  className={`rounded-md border px-2 py-2 text-xs capitalize ${
+                  className={`rounded-lg border px-2 py-2 text-xs capitalize transition-colors ${
                     settings.readingWidth === width
-                      ? 'border-violet-500 bg-violet-950/40 text-violet-300'
-                      : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700'
+                      ? 'border-clay bg-clay-wash text-clay-deep'
+                      : 'border-line bg-paper text-soft hover:border-faint'
                   }`}
                 >
                   {width}
                 </button>
               ))}
             </div>
-          </div>
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
-            <p className="text-xs font-medium uppercase tracking-widest text-zinc-600">Alignment</p>
+          </Card>
+          <Card className="p-3.5">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-faint">Alignment</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setTextAlign('left')}
-                className={`flex items-center justify-center gap-2 rounded-md border px-2 py-2 text-xs ${
-                  settings.textAlign === 'left'
-                    ? 'border-violet-500 bg-violet-950/40 text-violet-300'
-                    : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700'
-                }`}
-              >
-                <AlignLeft className="h-3.5 w-3.5" /> Left
-              </button>
-              <button
-                type="button"
-                onClick={() => setTextAlign('center')}
-                className={`flex items-center justify-center gap-2 rounded-md border px-2 py-2 text-xs ${
-                  settings.textAlign === 'center'
-                    ? 'border-violet-500 bg-violet-950/40 text-violet-300'
-                    : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700'
-                }`}
-              >
-                <AlignCenter className="h-3.5 w-3.5" /> Center
-              </button>
+              {[
+                { id: 'left', label: 'Left', icon: AlignLeft },
+                { id: 'center', label: 'Center', icon: AlignCenter },
+              ].map((align) => (
+                <button
+                  key={align.id}
+                  type="button"
+                  onClick={() => setTextAlign(align.id)}
+                  className={`flex items-center justify-center gap-2 rounded-lg border px-2 py-2 text-xs transition-colors ${
+                    settings.textAlign === align.id
+                      ? 'border-clay bg-clay-wash text-clay-deep'
+                      : 'border-line bg-paper text-soft hover:border-faint'
+                  }`}
+                >
+                  <align.icon className="h-3.5 w-3.5" aria-hidden="true" /> {align.label}
+                </button>
+              ))}
             </div>
-          </div>
+          </Card>
         </div>
         <ToggleRow
           icon={Captions}
-          label="Caption-Friendly Mode"
-          description="Keeps generated AI text in tighter chunks for captions and screen magnifiers."
+          label="Caption-friendly mode"
+          description="Keeps AI text in tighter chunks for captions and screen magnifiers."
           checked={settings.captionsMode}
           onChange={() => toggle('captionsMode')}
         />
         <ToggleRow
           icon={Type}
-          label="Underline Links"
-          description="Makes links identifiable without relying on color alone."
+          label="Underline links"
+          description="Links are identifiable without relying on colour alone."
           checked={settings.underlineLinks}
           onChange={() => toggle('underlineLinks')}
         />
-      </section>
 
-      <section aria-labelledby="tts-heading" className="space-y-3">
-        <h2 id="tts-heading" className="text-xs font-semibold uppercase tracking-widest text-zinc-600">
-          Text-to-Speech
-        </h2>
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+        <SectionTitle>Text to speech</SectionTitle>
+        <Card className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-zinc-200">Browser TTS</p>
-              <p className="mt-1 text-xs text-zinc-500">
-                Press <kbd className="rounded border border-zinc-700 px-1 text-zinc-400">Ctrl+Space</kbd> globally to read the current view aloud.
+              <p className="text-sm font-medium text-ink">Read aloud voice</p>
+              <p className="mt-1 text-xs text-faint">
+                Press <Kbd>Ctrl</Kbd> + <Kbd>Space</Kbd> anywhere to read the current page, or use
+                the speaker buttons on any AI response.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleTtsDemo}
-              className="flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
-            >
-              {window.speechSynthesis?.speaking ? (
-                <>
-                  <VolumeX className="h-4 w-4" /> Stop
-                </>
-              ) : (
-                <>
-                  <Volume2 className="h-4 w-4" /> Test Voice
-                </>
-              )}
-            </button>
+            <Button variant={speaking ? 'danger' : 'soft'} onClick={handleTtsDemo}>
+              {speaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+              {speaking ? 'Stop' : 'Test voice'}
+            </Button>
           </div>
-        </div>
-      </section>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-faint">Voice</span>
+              <select
+                value={settings.ttsVoice}
+                onChange={(e) => setSettings((s) => ({ ...s, ttsVoice: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm text-ink focus:border-clay focus:outline-none"
+              >
+                <option value="">System default</option>
+                {voices.map((voice) => (
+                  <option key={voice.name} value={voice.name}>
+                    {voice.name} ({voice.lang})
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-faint">
+                Speed: {Number(settings.ttsRate || 1).toFixed(2)}x
+              </span>
+              <input
+                type="range"
+                min="0.5"
+                max="1.8"
+                step="0.05"
+                value={settings.ttsRate || 1.25}
+                onChange={(e) => setSettings((s) => ({ ...s, ttsRate: Number(e.target.value) }))}
+                className="mt-3 w-full accent-[rgb(193,78,43)]"
+              />
+            </label>
+          </div>
+        </Card>
 
-      <section className="rounded-lg border border-zinc-800 bg-zinc-900/30 p-4">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-600">
-          Keyboard Shortcuts
-        </h2>
-        <ul className="mt-3 space-y-2 text-sm text-zinc-400">
-          <li className="flex justify-between">
-            <span>Toggle AI voice (TTS)</span>
-            <kbd className="rounded border border-zinc-700 bg-zinc-900 px-2 py-0.5 text-xs">Ctrl+Space</kbd>
-          </li>
-          <li className="flex justify-between">
-            <span>Open Accessibility panel</span>
-            <kbd className="rounded border border-zinc-700 bg-zinc-900 px-2 py-0.5 text-xs">Ctrl+Shift+A</kbd>
-          </li>
-          <li className="flex justify-between">
-            <span>Go to Dashboard</span>
-            <kbd className="rounded border border-zinc-700 bg-zinc-900 px-2 py-0.5 text-xs">Ctrl+1</kbd>
-          </li>
-          <li className="flex justify-between">
-            <span>URL Study Generator</span>
-            <kbd className="rounded border border-zinc-700 bg-zinc-900 px-2 py-0.5 text-xs">Ctrl+2</kbd>
-          </li>
-        </ul>
-      </section>
+        <SectionTitle>Keyboard shortcuts</SectionTitle>
+        <Card>
+          <ul className="space-y-2.5 text-sm text-soft">
+            <li className="flex justify-between">
+              <span>Read page aloud</span>
+              <span><Kbd>Ctrl</Kbd> + <Kbd>Space</Kbd></span>
+            </li>
+            <li className="flex justify-between">
+              <span>Open accessibility settings</span>
+              <span><Kbd>Ctrl</Kbd> + <Kbd>Shift</Kbd> + <Kbd>A</Kbd></span>
+            </li>
+            <li className="flex justify-between">
+              <span>Go to Overview</span>
+              <span><Kbd>Ctrl</Kbd> + <Kbd>1</Kbd></span>
+            </li>
+            <li className="flex justify-between">
+              <span>Open Study Chat</span>
+              <span><Kbd>Ctrl</Kbd> + <Kbd>2</Kbd></span>
+            </li>
+          </ul>
+        </Card>
 
-      <button
-        type="button"
-        onClick={resetAccessibility}
-        className="inline-flex items-center gap-2 rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
-      >
-        <RotateCcw className="h-4 w-4" /> Reset accessibility settings
-      </button>
-    </div>
+        <Button variant="ghost" onClick={resetAccessibility}>
+          <RotateCcw className="h-4 w-4" /> Reset accessibility settings
+        </Button>
+      </div>
+    </View>
   )
 }
