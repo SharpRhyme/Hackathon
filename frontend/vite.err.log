@@ -1,0 +1,18 @@
+[2m17:21:07[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/live/config[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m17:21:08[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/live/config[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m17:22:03[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/chat/stream[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m17:23:27[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/ai/stream[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m17:23:43[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/ai/stream[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m17:23:44[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/ai/stream[39m
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)

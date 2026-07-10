@@ -1,44 +1,44 @@
 import {
-  LayoutDashboard,
-  Brain,
-  Layers,
-  TrendingUp,
-  Calculator,
-  PenLine,
-  FlaskConical,
-  BookOpen,
-  Zap,
-  CreditCard,
-  FileText,
-  Timer,
-  Network,
-  StickyNote,
-  Bot,
-  Route,
-  BarChart3,
-  LineChart,
-  PenTool,
-  BookMarked,
-  Sparkles,
-  Microscope,
-  Atom,
   Accessibility,
+  Atom,
+  BarChart3,
+  BookMarked,
+  BookOpen,
+  Bot,
+  Brain,
+  Calculator,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
+  FileText,
+  Gamepad2,
+  Home,
+  LineChart,
   Link2,
+  Library,
+  Microscope,
+  Network,
+  PenLine,
+  PenTool,
+  Route,
+  Sparkles,
+  Timer,
   UserCircle,
+  Video,
+  Zap,
 } from 'lucide-react'
 import { useAccessibility } from '../context/AccessibilityContext'
 
 const ICONS = {
-  dashboard: LayoutDashboard,
+  dashboard: Home,
   blurt: Zap,
   flashcards: CreditCard,
   exemplar: FileText,
   timed: Timer,
   mindmap: Network,
-  cornell: StickyNote,
+  cornell: Library,
   tutor: Bot,
+  interview: Video,
   paths: Route,
   progress: BarChart3,
   desmos: LineChart,
@@ -50,70 +50,75 @@ const ICONS = {
   labs: Microscope,
   equations: Calculator,
   crawler: Link2,
+  arcade: Gamepad2,
   accessibility: Accessibility,
   account: UserCircle,
 }
 
 const NAV_SECTIONS = [
   {
-    id: 'overview',
-    label: 'Overview',
-    items: [{ id: 'dashboard', label: 'Dashboard', icon: 'dashboard' }],
-  },
-  {
-    id: 'study',
-    label: 'Study Methods',
+    id: 'home',
+    label: 'Home',
     items: [
-      { id: 'blurt', label: 'Blurt Method', icon: 'blurt' },
-      { id: 'flashcards', label: 'Flashcards (SRS)', icon: 'flashcards' },
-      { id: 'exemplar', label: 'Exemplar Essays', icon: 'exemplar' },
-      { id: 'timed', label: 'Timed Practice', icon: 'timed' },
-      { id: 'mindmap', label: 'Mind Maps', icon: 'mindmap' },
-      { id: 'cornell', label: 'Cornell Notes', icon: 'cornell' },
-      { id: 'crawler', label: 'URL Study Generator', icon: 'crawler', highlight: true },
+      { id: 'dashboard', label: 'Home', icon: 'dashboard' },
+      { id: 'progress', label: 'Progress', icon: 'progress' },
+      { id: 'arcade', label: 'Arcade & Pomodoro', icon: 'arcade' },
     ],
   },
   {
-    id: 'generic',
-    label: 'Generic',
+    id: 'notes',
+    label: 'Notes & Ideas',
     items: [
-      { id: 'tutor', label: 'AI Tutor', icon: 'tutor' },
+      { id: 'cornell', label: 'Bookshelf', icon: 'cornell' },
+      { id: 'mindmap', label: 'Mind Maps', icon: 'mindmap' },
+      { id: 'crawler', label: 'URL Studio', icon: 'crawler' },
+    ],
+  },
+  {
+    id: 'practice',
+    label: 'Practice & Recall',
+    items: [
+      { id: 'flashcards', label: 'Flashcards', icon: 'flashcards' },
+      { id: 'blurt', label: 'Blurt Method', icon: 'blurt' },
+      { id: 'timed', label: 'Timed Practice', icon: 'timed' },
+      { id: 'interview', label: 'Interview Sim', icon: 'interview' },
+    ],
+  },
+  {
+    id: 'ai',
+    label: 'AI Coaching',
+    items: [
+      { id: 'tutor', label: 'Study Chat', icon: 'tutor' },
       { id: 'paths', label: 'Adaptive Paths', icon: 'paths' },
-      { id: 'progress', label: 'Progress Dashboard', icon: 'progress' },
+      { id: 'exemplar', label: 'Exemplar Essays', icon: 'exemplar' },
+      { id: 'feedback', label: 'Essay Feedback', icon: 'feedback' },
     ],
   },
   {
     id: 'math',
-    label: 'Math',
+    label: 'Maths Tools',
     items: [
-      { id: 'desmos', label: 'Desmos Integration', icon: 'desmos' },
-      { id: 'whiteboard', label: 'Step-by-Step Whiteboard', icon: 'whiteboard' },
-    ],
-  },
-  {
-    id: 'english',
-    label: 'English',
-    items: [
-      { id: 'comprehension', label: 'Comprehension Practice', icon: 'comprehension' },
-      { id: 'essay', label: 'Essay Planner', icon: 'essay' },
-      { id: 'feedback', label: 'AI Feedback', icon: 'feedback' },
-    ],
-  },
-  {
-    id: 'science',
-    label: 'Science',
-    items: [
-      { id: 'diagrams', label: 'Interactive Diagrams', icon: 'diagrams' },
-      { id: 'labs', label: 'Virtual Labs', icon: 'labs' },
+      { id: 'desmos', label: 'Graphing', icon: 'desmos' },
+      { id: 'whiteboard', label: 'Math Whiteboard', icon: 'whiteboard' },
       { id: 'equations', label: 'Equation Solver', icon: 'equations' },
+    ],
+  },
+  {
+    id: 'english-science',
+    label: 'English & Science',
+    items: [
+      { id: 'essay', label: 'Essay Planner', icon: 'essay' },
+      { id: 'comprehension', label: 'Comprehension', icon: 'comprehension' },
+      { id: 'diagrams', label: 'Diagrams', icon: 'diagrams' },
+      { id: 'labs', label: 'Virtual Labs', icon: 'labs' },
     ],
   },
   {
     id: 'settings',
     label: 'Settings',
     items: [
+      { id: 'accessibility', label: 'Appearance & Access', icon: 'accessibility' },
       { id: 'account', label: 'Account', icon: 'account' },
-      { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
     ],
   },
 ]
@@ -124,101 +129,83 @@ export default function Sidebar({ activeView, onNavigate }) {
 
   return (
     <aside
-      className={`flex flex-col border-r border-zinc-800 bg-zinc-950 transition-all duration-200 ${
-        collapsed ? 'w-14' : 'w-60'
+      className={`sidebar-shell flex flex-col border-r border-line bg-raised/92 backdrop-blur-xl transition-all duration-300 ${
+        collapsed ? 'w-[4.75rem]' : 'w-[18rem]'
       }`}
       aria-label="Main navigation"
     >
-      <div className="flex h-12 items-center justify-between border-b border-zinc-800 px-3">
+      <div className="flex h-[4.35rem] items-center justify-between border-b border-line/70 px-3.5">
         {!collapsed && (
-          <div className="flex items-center gap-2 overflow-hidden">
-            <Brain className="h-5 w-5 shrink-0 text-violet-400" aria-hidden="true" />
-            <span className="truncate text-sm font-semibold tracking-tight text-zinc-100">
-              LearnDifferent
+          <div className="flex items-center gap-3 overflow-hidden">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-ink text-white shadow-card">
+              <Brain className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate text-[15px] font-semibold tracking-tight text-ink">
+                LearnDifferent
+              </span>
+              <span className="block truncate text-[11px] font-medium text-faint">Study workspace</span>
             </span>
           </div>
         )}
         <button
           type="button"
-          onClick={() =>
-            setSettings((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }))
-          }
-          className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"
+          onClick={() => setSettings((s) => ({ ...s, sidebarCollapsed: !s.sidebarCollapsed }))}
+          className="grid h-8 w-8 place-items-center rounded-full text-faint transition-colors hover:bg-sunken hover:text-ink"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto scrollbar-thin py-2">
-        {NAV_SECTIONS.map((section) => (
-          <div
-            key={section.id}
-            className={`sidebar-section mb-1 ${activeView === section.items[0]?.id ? 'active-section' : ''}`}
-          >
-            {!collapsed && (
-              <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
-                {section.label}
-              </p>
-            )}
-            <ul className="space-y-0.5 px-2">
-              {section.items.map((item) => {
-                const Icon = ICONS[item.icon] || BookOpen
-                const isActive = activeView === item.id
-                return (
-                  <li key={item.id}>
-                    <button
-                      type="button"
-                      onClick={() => onNavigate(item.id)}
-                      title={collapsed ? item.label : undefined}
-                      className={`group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
-                        isActive
-                          ? 'bg-zinc-800/80 text-zinc-100'
-                          : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
-                      } ${item.highlight && !isActive ? 'border border-violet-900/40' : ''}`}
-                      aria-current={isActive ? 'page' : undefined}
-                    >
-                      <Icon
-                        className={`h-4 w-4 shrink-0 ${
-                          isActive ? 'text-violet-400' : 'text-zinc-500 group-hover:text-zinc-400'
+      <nav className="flex-1 overflow-y-auto scrollbar-thin px-2 py-3.5">
+        {NAV_SECTIONS.map((section) => {
+          const sectionActive = section.items.some((item) => item.id === activeView)
+          return (
+            <div
+              key={section.id}
+              className={`sidebar-section mb-3 ${sectionActive ? 'active-section' : ''}`}
+            >
+              {!collapsed && (
+                <p className="px-3.5 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">
+                  {section.label}
+                </p>
+              )}
+              <ul className="space-y-1">
+                {section.items.map((item) => {
+                  const Icon = ICONS[item.icon] || BookOpen
+                  const isActive = activeView === item.id
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        onClick={() => onNavigate(item.id)}
+                        title={collapsed ? item.label : undefined}
+                        className={`nav-item group flex w-full items-center gap-3 rounded-[13px] px-3 py-2.5 text-left text-[13px] font-medium transition-all ${
+                          item.id === 'dashboard' ? 'home-nav-item' : ''
+                        } ${
+                          isActive
+                            ? 'active bg-ink text-white shadow-card'
+                            : 'text-soft hover:bg-sunken/75 hover:text-ink'
                         }`}
-                        aria-hidden="true"
-                      />
-                      {!collapsed && (
-                        <span className="truncate">
-                          {item.label}
-                          {item.highlight && (
-                            <span className="ml-1 text-[10px] text-violet-400">★</span>
-                          )}
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        ))}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        <Icon
+                          className={`h-[17px] w-[17px] shrink-0 ${
+                            isActive ? 'text-white' : 'text-faint group-hover:text-soft'
+                          }`}
+                          aria-hidden="true"
+                        />
+                        {!collapsed && <span className="truncate">{item.label}</span>}
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )
+        })}
       </nav>
-
-      {!collapsed && (
-        <div className="border-t border-zinc-800 p-3">
-          <p className="text-[10px] leading-relaxed text-zinc-600">
-            <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 text-zinc-400">
-              Ctrl
-            </kbd>{' '}
-            +{' '}
-            <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 text-zinc-400">
-              Space
-            </kbd>{' '}
-            — AI voice
-          </p>
-        </div>
-      )}
     </aside>
   )
 }
